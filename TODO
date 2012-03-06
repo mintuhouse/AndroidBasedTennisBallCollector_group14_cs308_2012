@@ -1,0 +1,34 @@
+Extend the connecction to GSM
+ie., by using mobile sim cards, now we are limited by geographical locations
+we can even use SIM cards to transmit live video via videocalling. (3G)
+
+
+Combine:
+    Robotic arm mvmt project
+    Controlling Firebird V using an Android based phone via Bluetooth Controlling FirebirdV ATmega2560
+    Tennis Ball Collector using ATmega 2560 Robot
+Fork:
+    TCP/IP project
+    Android API
+
+
+
+TODO:
+* Most of the code will be in Java, so we need to learn
+    - Java
+    - Android API, using its simulator
+    - Xbee, RTOS usage
+    - Read and research about various projects available online.
+    - Latex how to use it - writing templates in it.
+
+* Include all step by step procedures to install, and do projecct to even a noob in a projecct report.
+    - Appendices - to give addtional info like various installations and usage guides
+
+REPORT
+* Include costs of various items in the Report
+* Create a latex report template
+    - Write a reade file for automatic report generation.
+    - Separate template from main content
+
+Use latex to create the project.
+
