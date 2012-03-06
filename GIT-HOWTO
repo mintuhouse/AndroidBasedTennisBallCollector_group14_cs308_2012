@@ -1,0 +1,58 @@
+
+
+/******************************************************************************/
+ONE TIME ONLY
+
+
+Global setup:
+
+ Set up git
+  git config --global user.name "Hasan Kumar Reddy A"
+  git config --global user.email mintuhouse@gmail.com
+      
+
+Next steps:
+
+  mkdir AndroidBasedTennisBallCollector_group14_cs308_2012
+  cd AndroidBasedTennisBallCollector_group14_cs308_2012
+  git init
+  touch README
+  git add README
+  git commit -m 'first commit'
+  git remote add origin git@github.com:mintuhouse/AndroidBasedTennisBallCollector_group14_cs308_2012.git
+  git push -u origin master
+      
+
+Existing Git Repo?
+
+  cd existing_git_repo
+  git remote add origin git@github.com:mintuhouse/AndroidBasedTennisBallCollector_group14_cs308_2012.git
+  git push -u origin master
+
+
+
+/******************************************************************************/
+EVERY TIME YOU MAKE ANY CHANGES
+
+
+
+
+
+
+
+
+/******************************************************************************/
+EVERY TIME YOU EXIT FROM THE PROJECT DIRECTORY
+
+Save your changes to remote host
+    > git push -u origin master
+    > cd ..
+
+
+
+
+
+
+
+/******************************************************************************/
+
