@@ -1,5 +1,3 @@
-<YET TO BE UPDATED - DONT START USING THESE YET>
-
 Intended for firstime users of github
 Note: A few instructions may be specific to our current project 
 
@@ -14,32 +12,6 @@ A few note worthy ones are
 
 /******************************************************************************/
 ONE TIME ONLY
-
-
-Global setup:
-
- Set up git
-  git config --global user.name "Hasan Kumar Reddy A"
-  git config --global user.email mintuhouse@gmail.com
-      
-
-Next steps:
-
-  mkdir AndroidBasedTennisBallCollector_group14_cs308_2012
-  cd AndroidBasedTennisBallCollector_group14_cs308_2012
-  git init
-  touch README
-  git add README
-  git commit -m 'first commit'
-  git remote add origin git@github.com:mintuhouse/AndroidBasedTennisBallCollector_group14_cs308_2012.git
-  git push -u origin master
-      
-
-Existing Git Repo?
-
-  cd existing_git_repo
-  git remote add origin git@github.com:mintuhouse/AndroidBasedTennisBallCollector_group14_cs308_2012.git
-  git push -u origin master
 
 *** Setting Up the Git Repo
 All the instructions are from http://help.github.com/linux-set-up-git/
