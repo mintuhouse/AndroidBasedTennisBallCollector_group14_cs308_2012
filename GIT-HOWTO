@@ -1,4 +1,13 @@
+Intended for firstime users of github
+Note: A few instructions may be specific to our current project 
 
+Sources: 
+(various help pages on internet)
+A few note worthy ones are
+ * help.github.com
+ * http://cheat.errtheblog.com/s/git
+ * http://help.github.com/git-cheat-sheets/
+ * http://byte.kde.org/~zrusin/git/git-cheat-sheet-medium.png
 
 /******************************************************************************/
 ONE TIME ONLY
@@ -30,12 +39,26 @@ Existing Git Repo?
   git push -u origin master
 
 
+/******************************************************************************/
+EVERYTIME YOU START CODING
+Check your mail whether anyone made any changes
+
+Enter the project directory
+    > cd ~/CS308/AndroidBasedTennisBallCollector_group14_cs308_2012
+Pull the git repo from github
+    > 
+
+
+
 
 /******************************************************************************/
-EVERY TIME YOU MAKE ANY CHANGES
+EVERYTIME YOU MAKE ANY CHANGES
 
-
-
+Check the status
+    > git status
+If you have any uncommited changes
+    > git add .
+    > git commit -m "<Changes made>"
 
 
 
@@ -44,15 +67,40 @@ EVERY TIME YOU MAKE ANY CHANGES
 /******************************************************************************/
 EVERY TIME YOU EXIT FROM THE PROJECT DIRECTORY
 
+Check the status
+    > git status
+If you have any uncommited changes
+    > git add .
+    > git commit -m "<Changes made>"
 Save your changes to remote host
     > git push -u origin master
+Leave the directory
     > cd ..
 
+Send a mail on our thread describing the changes you made 
 
+/******************************************************************************/
+
+
+GENERAL TIPS & USAGE
+
+* For adding forgotten changes to last commit
+
+    > git add .
+  or you can also just add that particular file by
+    > git add <filename>
+  Commit the changes to last commit
+    > git commit --amend
+
+* Create a new branch
+
+
+* Switch to a particular branch
+ Note: You must avoid making changes to master without review 
+    So avoid switching to master.
 
 
 
 
 
 /******************************************************************************/
-

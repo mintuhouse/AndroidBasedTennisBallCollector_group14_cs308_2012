@@ -70,7 +70,8 @@ TODO:
     - Read and research about various projects available online.
     - Latex how to use it - writing templates in it.
 
-*
+* Search 
+    - how to transmit video to android - explore possible ways
 
 
 /******************************************************************************/
@@ -89,7 +90,73 @@ Just have a look at any of the project report in
     - Appendices 
         - to give addtional info like various installations and usage guides
 * Include costs of various items in the Report
+* Index of Report - tentative (taken from DBIS SRS)
+    1.Introduction
+        1.1.Overall Description
+        1.2.Definitions
+        1.3.Requirement Specification
+        1.4.References
+        1.5.Developer Responsibilities
+    2.Implementation
+        2.1.Product Perspective
+        2.2.Product Functions Overview
+        2.3.User Flowchart & System Design
+        2.3.User Characteristics
+        2.4.General contraints and assumptions
+        2.6.Additional Hardware
+    3.Functional Requirements
+        3.x.<each feature e.g. bluetooth>
+    4.Implementation of Functional Requirements
+        Working - explain with diagrams
+        4.x.y.( subparts and explain code )
+    5.External Interface Requirements
+        5.1.Android Application
+        5.2.Embedded Systems
+        5.3.Hardware
+            Describe the implementation and reproduction of various hardware/mechanical parts used
+            explain with diagrams
+    6.Usage Settings
+        various settings which are to be made to use the project
+    7.Development
+        7.1.Settings & Configuration
+            say for communication e.g. serial, bluetooth, WiFi
+            7.1.1.Environment
+                (i) FB5 
+                (ii)Android
+            7.1.2.Project (adjustable)
+        7.2.Utilities     
+            7.2.1.Hardware
+            7.2.2.Software   
+        7.3.Code Description
+            Just copy paste the commented code here
+        7.4.Instruction Execution
+    8.Performance Characteristics
+    9.Design Constraints
+        (These contraints can be overcomed)
+    10.Tesing
+        10.1.Criteria
+            test cases
+        10.2.Results
+    11.Troubleshooting
+        11.1.Delays
+        11.2.something not working?
+    12.Individual Roles and contribution
+        include learnings
+    13.Roadmap
+        expected deadlines and completion
+    14.Challenges and Innovation
+        14.1.Github Repo
+            properly maintained and all codes are commited regularly
+        14.2.Bugs & Fixes
+    15.Bug Report
+        Unfixed bugs
+    16.Reusability
+        for name sake
+    17.Future Work
+    18.Conclusion
 
+We may instead divide the above SRS into two parts
+    One for usage and other for developers
 
 
 /******************************************************************************/
@@ -129,21 +196,23 @@ DEADLINE
 16th Mar : Be proficient in part alloted to you     - 
 16th Mar : Team Meet 2                              -
             - Planning, allotment (concrete)
-24th Mar : Team Meet 3                              - 
+22nd Mar : Team Meet 3
+            - work review
+25th Mar : Team Meet 3                              - 
             - Make independent modules work
               * establishing connection
               * android application
               * live video streaming
               * FB5 codes - review all assignments
-31st Mar : Team Meet 4                              -
+29th Mar : Team Meet 4                              -
             - Full Application alpha version
             - discuss further enhancements
             - Decide on Report Template
-07th Apr : Team Meet 5                              -
+31st Apr : Team Meet 5                              -
             - Implementation of enhancements
             - Beta release
             - Discuss report content, website showcase
-14th Apr : Team Meet 6                              -
+07th Apr : Team Meet 6                              -
             - Complete Code review, checking
              Project Report, website, video, Github wiki,
              Demo Reharsal
@@ -152,4 +221,10 @@ DEADLINE
 
 
 /******************************************************************************/
+
+Thoughts :P
+* Lack of clarity - a bliss or despair?
+Clarity leads to self-confidence, which in might turn to over-confidence sometimes and make to go through some grave situations.
+On the other hand, if you lack the clarity, you would always strive to acheive it and during the process of acheiving it, you would assimilate what ever you know at that point of time and might even explore many new topics, which you might have never known had you had the clarity.
+
 
