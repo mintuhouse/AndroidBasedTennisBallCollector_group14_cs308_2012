@@ -137,8 +137,11 @@ GENERAL TIPS & USAGE
     > git checkout -b <branch_name>
 
 * Switch to a particular branch
+    > git checkout <branch_name>
  Note: You must avoid making changes to master without review 
     So avoid switching to master.
+
+* 
 
 
 
