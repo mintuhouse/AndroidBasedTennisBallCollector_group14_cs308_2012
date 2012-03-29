@@ -1,0 +1,86 @@
+Stage 1:
+Get the live camera stream (from Edimax IC-3030Wn (referes as IPCam)) onto mobile (Sony Ericson MT11i OS- Android 2.3.4 (refered as Mobile)).
+
+After 2 days to tweaking with a lot of softwares, we could finally get the live videostream onto mobile. 
+Steps Involved:
+(IP settings tested in ERTS Lab)
+- Reset the IPCam, by press the Reset button on its bottom for 5 seconds.
+	will reset the IP Address of Camera to 192.168.2.3
+- Install the IPCam Admin Utility on your PC from accompanied CD.
+- Connect the IPCam to your PC via LAN wire.
+- Change your network connection details as
+	IPv4 Address 		192.168.2.1
+	IPv4 Subnet Mask	255.255.255.0
+	IPv4 Default Gateway blank
+	IPv4 DNS Server		 blank
+- Start the Admin Utility.
+- You should find the Camera listed. 
+- Select your camera and Click on Configure Camera.
+	It will ask for username password. (By default they are "admin" , "1234")
+	You may use this interface to change the IP address of IPCam and its authentication details. 
+	Remember to set it so that both your PC and IPCam belong to same network (i.e., first 16/24 bits of IP Address)
+- Click Browse Camera via web.
+	You should see IE popping up showing live stream from your camera. 
+	(It will again ask for authentication, use the same as above(unless previously changed))
+- Open a command prompt in your PC (as Administrator).
+	Enable WiFi on your PC and type the following commands in it.
+	> netsh wlan set hostednetwork mode=allow ssid="<someuname>" key="<somepass>"	
+		(you only need to do this once)
+	> netsh wlan start hostednetwork
+		(everytime you start your WLAN network adapter)
+- Now click on `Network` > `WLAN` Tab of IE.
+	- Click `Refresh` button.
+	- You should see a network called <someuname> listed in it - select it
+	- Type <someuname> in SSID.
+	- Select authentication as WPA2-PSK
+	- Encryption Type AES.
+	- WPA Pre-shared key as <somepass>
+	- Scroll down and click on `Apply`.
+- Now Disconnect the LAN Wire and refresh the browser. 
+	You should still be able see the video. 
+	Congrats your are half-way through your settings
+- (The next few steps are optional but are recommended)
+	- Open `Network`>`Lan` tab in browser.
+	- Set the following (only for ERTS Lab, haven't checked outside)
+		Network Type 	: Staic IP Address  
+		IP Address 		: 192.168.137.16 
+		(You need to connect some other Laptop to your <someuname> network and obtain there details. Change the last 8-bits)
+		Subnet Mask 	: 255.255.255.0
+		Gateway 		: 192.168.137.1
+		Primary DNS 	: 192.168.137.1
+		Secondary DNS 	:  
+		Web Port 		: 80
+	- Click `Apply`.
+	- Connect your PC to Local Network via Ethernet cable.
+	- Set the IP address.
+		(For ERTS Lab)
+		IPv4 Address 		10.129.154.194
+		IPv4 Subnet Mask	255.255.128.0
+		IPv4 Default Gateway10.129.250.1
+		IPv4 DNS Server		10.129.1.1
+	- Set your WLAN Wireless Network Connection 2 's IPv4 Address as
+		IP Address 		: 192.168.137.1
+		Subnet Mask 	: 255.255.255.0
+		Gateway 		: blank
+		Primary DNS 	: blank
+	- Restart your IPCam and WiFi Adapter.
+	- Refresh your browser and see whether you can still get the video stream.
+- Connecting yout mobile to <someuname> network. 
+	( Wondering how can an Adhoc connection be used to connect Mobile?
+	<someuname> network which was setup previously is not an Adhoc but an Interface mode WiFi network. 
+	Hence effectively your PC behaves as a router and you can even connect your Android mobile to it. Works like a charm. :))
+	- Open Opera Mobile browser. (other browsers might not support the mjpg format)
+	- Use following links to get live stream.
+		http://192.168.137.16/snapshot.jpg?dummy=<somerandomnumber>		- to get the current snapshot from the IPCam
+		http://192.168.137.16/mjpg/video.mjpg							- to get Live Video Streaming
+	
+	
+- Trouble Shooting with IPCam - reset it(no other way :P) and begin from the start.
+
+Challenges faced:
+1) My mobile cannot connect to neither the KR-WiFi or an AdHoc created from my PC.
+Solutions tried:
+	- Rooted the mobile. Installed and tried various apps which claimed various features - none of this worked.
+	- Finally following viedo helped us.
+	http://www.youtube.com/watch?v=klHzMyYFGeQ
+	It describes how to create a WLAN network bridge in your PC (which served as a Interface mode WiFi connection).
