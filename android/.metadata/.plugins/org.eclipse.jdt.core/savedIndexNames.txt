@@ -1,3 +1,0 @@
-INDEX VERSION 1.126+D:\projects\ERTS\android_app\android\.metadata\.plugins\org.eclipse.jdt.core
-2846315153.index
-1413059111.index
