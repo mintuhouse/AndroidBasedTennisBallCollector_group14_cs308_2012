@@ -8,5 +8,9 @@
     <string name="downarrow">Down</string>
     <string name="leftarrow">Left</string>
     <string name="rightarrow">Right</string>
+    <string name="pickdesc">Pick the Ball</string>
+    <string name="pick">Pick</string>
+    <string name="manualmode">Manual</string>
+    <string name="automode">Auto</string>
 
 </resources>

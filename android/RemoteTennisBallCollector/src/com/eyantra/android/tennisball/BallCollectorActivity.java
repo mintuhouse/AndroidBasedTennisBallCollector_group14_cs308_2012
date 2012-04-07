@@ -1,9 +1,15 @@
 package com.eyantra.android.tennisball;
 
 
+import java.io.InputStream;
+import java.net.URL;
+
 import android.app.Activity;
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -14,10 +20,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 public class BallCollectorActivity extends Activity {
-	WebView VideoFrame;
-	Button UpButton,DownButton,LeftButton,RightButton;
-	ImageView imgView;
-	TextView textview;
+	private WebView VideoFrame;
+	private Button UpButton,DownButton,LeftButton,RightButton;
+	private ImageView imgView;
+	private TextView textview;
+	private String imgURL;
+	private Handler tHandler = new Handler();
 	
 	/*	
  	 * Open the webpage inline in the application
@@ -29,6 +37,27 @@ public class BallCollectorActivity extends Activity {
         }
     }		
 	*/
+	
+	private Drawable grabImageFromUrl(String url) throws Exception {
+		return Drawable.createFromStream((InputStream)new URL(url).getContent(), "src");
+	}
+	
+	private Runnable UpdateImageTask = new Runnable(){
+		public void run(){
+			long ms = SystemClock.uptimeMillis();
+        	String iurl = imgURL+"?dummy="+ ms;
+            textview.setText("Displaying "+ iurl);
+        	try {
+    		    imgView.setImageDrawable(grabImageFromUrl(iurl));
+    		} catch(Exception e) {
+    			imgView.setImageResource(R.drawable.notfound);
+    		    textview.setText("Error: Exception");
+    		}
+			
+			tHandler.postAtTime(this, ms+1000);
+		}
+		
+	};
 	
 	
     /** Called when the activity is first created. */
@@ -45,12 +74,21 @@ public class BallCollectorActivity extends Activity {
         VideoFrame.setWebViewClient(new VideoWebViewClient()); 
          */
         
-        String imgURL = "http://www.google.co.in/images/srpr/logo3w.png";
+        imgURL = "http://www.google.co.in/images/srpr/logo3w.png";
         textview = (TextView) findViewById(R.id.textview);
         imgView = (ImageView) findViewById(R.id.imgView);
-        new ReloadImageView(this, 500, imgView, imgURL, textview);
+        //new ReloadImageView(this, 500, imgView, imgURL, textview);
+
+        tHandler.removeCallbacks(UpdateImageTask);
+        tHandler.postDelayed(UpdateImageTask, 100);
         
         addListenerOnJoyStick();
+    }
+    
+    /** Called when the activity is destroyed */
+    public void onDestroy(Bundle savedInstanceState){
+    	tHandler.removeCallbacks(UpdateImageTask);
+    	super.onDestroy();
     }
     
     /*

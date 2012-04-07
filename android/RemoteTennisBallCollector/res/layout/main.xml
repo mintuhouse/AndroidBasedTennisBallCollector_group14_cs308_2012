@@ -28,6 +28,15 @@
         android:scaleType="fitXY"
     />
 	
+	<ToggleButton 
+	    android:id="@+id/mode"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:textOn="@string/automode"
+	    android:textOff="@string/automode"
+	    android:checked="false"
+	/>
+	
  
     <LinearLayout 
         android:id="@+id/JoyStick"
@@ -57,12 +66,21 @@
 	       	 	android:layout_marginLeft="10dp"
 	       	 	android:background="@drawable/leftarrow"
 	       	 />
+       	    <Button 
+       	     	android:id="@+id/pick"
+       	     	android:contentDescription="@string/pickdesc"
+       	     	android:layout_width="60dp"
+       	     	android:layout_height="60dp"
+       	     	android:text="@string/pick"
+       	     	android:padding="0dp"
+       	     	android:layout_margin="0dp"
+       	     />
        	    <ImageButton 
 	       	   	android:id="@+id/rightbutton"
 	       	   	android:contentDescription="@string/rightarrow"
 	       	 	android:layout_width="60dp"
 	       	 	android:layout_height="60dp"
-	       	 	android:layout_marginLeft="60dp"
+	       	 	android:layout_marginLeft="0dp"
 	       	 	android:background="@drawable/rightarrow"
 	       	 />
        	</LinearLayout>
