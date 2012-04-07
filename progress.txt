@@ -54,7 +54,7 @@ Steps Involved:
 	- Connect your PC to Local Network via Ethernet cable.
 	- Set the IP address.
 		(For ERTS Lab)
-		IPv4 Address 		10.129.154.194
+		IPv4 Address 		10.129.154.249
 		IPv4 Subnet Mask	255.255.128.0
 		IPv4 Default Gateway10.129.250.1
 		IPv4 DNS Server		10.129.1.1
@@ -84,3 +84,6 @@ Solutions tried:
 	- Finally following viedo helped us.
 	http://www.youtube.com/watch?v=klHzMyYFGeQ
 	It describes how to create a WLAN network bridge in your PC (which served as a Interface mode WiFi connection).
+	
+	
+	page n0:56 uart fcccccccccccccccccc     
