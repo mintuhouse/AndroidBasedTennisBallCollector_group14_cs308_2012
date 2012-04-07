@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.net.URL;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -14,18 +16,27 @@ import android.view.KeyEvent;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 import android.view.View;
 import android.view.View.OnClickListener;
 
 public class BallCollectorActivity extends Activity {
 	private WebView VideoFrame;
-	private Button UpButton,DownButton,LeftButton,RightButton;
+	private ImageButton UpButton,DownButton,LeftButton,RightButton;
 	private ImageView imgView;
 	private TextView textview;
 	private String imgURL;
 	private Handler tHandler = new Handler();
+	private ToggleButton togglemode;
+	private boolean automode;
+	private LinearLayout manualcontrols;
+	private AlertDialog alertDialog;
 	
 	/*	
  	 * Open the webpage inline in the application
@@ -77,12 +88,17 @@ public class BallCollectorActivity extends Activity {
         imgURL = "http://www.google.co.in/images/srpr/logo3w.png";
         textview = (TextView) findViewById(R.id.textview);
         imgView = (ImageView) findViewById(R.id.imgView);
+        manualcontrols = (LinearLayout) findViewById(R.id.JoyStick);
         //new ReloadImageView(this, 500, imgView, imgURL, textview);
 
         tHandler.removeCallbacks(UpdateImageTask);
         tHandler.postDelayed(UpdateImageTask, 100);
+        togglemode = (ToggleButton) findViewById(R.id.mode);
+        automode = false;
         
-        addListenerOnJoyStick();
+        togglemode.setOnCheckedChangeListener(modelistener);
+
+        alertDialog = new AlertDialog.Builder(this).create();
     }
     
     /** Called when the activity is destroyed */
@@ -105,19 +121,49 @@ public class BallCollectorActivity extends Activity {
     }
     */
     
-    @Override
-    public void onConfigurationChanged(Configuration newConfig){        
-        super.onConfigurationChanged(newConfig);
-    }
     
     public void addListenerOnJoyStick(){
-    	UpButton = (Button) findViewById(R.id.uparrow);
-    	/*UpButton.setOnClickListener(new OnClickListener() {
-    		public void onClick(View arg0) {
-    			
-    		}
-    	});	*/
+    	UpButton = (ImageButton) findViewById(R.id.uparrow);
+    	/*UpButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+            }
+        });*/
+    }
+    
+    public void upButtonAction(View v){
+    	alertDialog.setTitle("Up Button Pressed.");
+    	alertDialog.show();
+    }
+    
+    public void downButtonAction(View v){
+    	alertDialog.setTitle("Down Button Pressed.");
+    	alertDialog.show();    	
+    }
+    
+    public void leftButtonAction(View v){
+    	alertDialog.setTitle("Left Button Pressed.");
+    	alertDialog.show();    	
     }
  
+    public void rightButtonAction(View v){
+    	alertDialog.setTitle("Right Button Pressed.");
+    	alertDialog.show();    	
+    }
+    
+    public void pickButtonAction(View v){
+    	alertDialog.setTitle("Pick Button Pressed.");
+    	alertDialog.show();    	
+    }
+    
+    OnCheckedChangeListener modelistener = new OnCheckedChangeListener() {
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if(isChecked){
+            	manualcontrols.setVisibility(LinearLayout.GONE);
+            } else {
+            	manualcontrols.setVisibility(LinearLayout.VISIBLE);
+            }
+        }
+    };
     
 }

@@ -10,7 +10,7 @@
     <string name="rightarrow">Right</string>
     <string name="pickdesc">Pick the Ball</string>
     <string name="pick">Pick</string>
-    <string name="manualmode">Manual</string>
-    <string name="automode">Auto</string>
+    <string name="manualmode">auto</string>
+    <string name="automode">AUTO</string>
 
 </resources>
