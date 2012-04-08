@@ -35,6 +35,7 @@
 	    android:textOn="@string/automode"
 	    android:textOff="@string/manualmode"
 	    android:checked="false"
+	    android:layout_margin="10dp"
 	/>
 	
  
