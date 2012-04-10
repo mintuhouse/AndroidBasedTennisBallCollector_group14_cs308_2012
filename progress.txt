@@ -73,6 +73,7 @@ Steps Involved:
 	- Use following links to get live stream.
 		http://192.168.137.16/snapshot.jpg?dummy=<somerandomnumber>		- to get the current snapshot from the IPCam
 		http://192.168.137.16/mjpg/video.mjpg							- to get Live Video Streaming
+		http://192.168.137.16/ipcam.asp
 	
 	
 - Trouble Shooting with IPCam - reset it(no other way :P) and begin from the start.
@@ -87,3 +88,8 @@ Solutions tried:
 	
 	
 	page n0:56 uart fcccccccccccccccccc     
+
+Getting the OpenCV to work
+http://comments.gmane.org/gmane.comp.handhelds.android.ndk/15250
+Replacing the make.exe file with latest version
+Infi bugs in the distribution supplied along with NVPACK

@@ -1,8 +1,13 @@
 package com.eyantra.android.tennisball;
 
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.Authenticator;
+import java.net.HttpURLConnection;
+import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.net.URLConnection;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -13,6 +18,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.view.KeyEvent;
+import android.webkit.HttpAuthHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -38,19 +44,56 @@ public class BallCollectorActivity extends Activity {
 	private LinearLayout manualcontrols;
 	private AlertDialog alertDialog;
 	
-	/*	
- 	 * Open the webpage inline in the application
+	
+ 	// Open the webpage inline in the application
     private class VideoWebViewClient extends WebViewClient {
+        @Override
+        public void onReceivedHttpAuthRequest(WebView view,
+                HttpAuthHandler handler, String host, String realm) {
+            handler.proceed("admin", "1234");
+        }
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             view.loadUrl(url);
             return true;
         }
+        @Override  
+        public void onPageFinished(WebView view, String url)  
+        {  
+            view.loadUrl("javascript:(function() { " +
+            		"var t=setTimeout(\"" +
+            		"document.getElementById('TD_Img2').style.display = 'none'; " +
+            		"document.getElementById('tr2').style.display = 'none'; " +
+            		"document.getElementById('cam1').style.width=window.innerWidth; " +
+            		"document.getElementById('cam1').style.height=window.innerHeight*0.9;" +
+            		"document.getElementById('cam1').onclick='event.cancelBubble = true; return false;'" +
+            		"\",1000);" +  
+                    "})()");  
+        }
     }		
-	*/
+	
+	private InputStream OpenHttpConnection(String strURL)
+            throws IOException {
+        URLConnection conn = null;
+        InputStream inputStream = null;
+        URL url = new URL(strURL);        
+        Authenticator.setDefault(new Authenticator(){
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("admin","1234".toCharArray());
+            }});
+        conn = url.openConnection();
+        HttpURLConnection httpConn = (HttpURLConnection) conn;
+        httpConn.setRequestMethod("GET");
+        httpConn.connect();
+        if (httpConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            inputStream = httpConn.getInputStream();
+        }
+        return inputStream;
+    }
 	
 	private Drawable grabImageFromUrl(String url) throws Exception {
-		return Drawable.createFromStream((InputStream)new URL(url).getContent(), "src");
+		//return Drawable.createFromStream((InputStream)new URL(url).getContent(), "src");
+		return Drawable.createFromStream((InputStream)OpenHttpConnection(url),"src");
 	}
 	
 	private Runnable UpdateImageTask = new Runnable(){
@@ -77,22 +120,25 @@ public class BallCollectorActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        /*
-         * Open the Video stream in application     
+        // Open the Video stream in application     
         VideoFrame = (WebView) findViewById(R.id.VideoFrameView);
+        VideoFrame.setClickable(false);
         VideoFrame.getSettings().setJavaScriptEnabled(true);
-        VideoFrame.loadUrl("http://www.google.com");        
-        VideoFrame.setWebViewClient(new VideoWebViewClient()); 
-         */
+        VideoFrame.loadUrl("http://192.168.137.16/ipcam.asp");
+        VideoFrame.setWebViewClient(new VideoWebViewClient());
         
-        imgURL = "http://www.google.co.in/images/srpr/logo3w.png";
+        /*
+        //imgURL = "http://www.google.co.in/images/srpr/logo3w.png";
+        imgURL = "http://192.168.137.16/snapshot.jpg";
+        */
         textview = (TextView) findViewById(R.id.textview);
-        imgView = (ImageView) findViewById(R.id.imgView);
+        //imgView = (ImageView) findViewById(R.id.imgView);
         manualcontrols = (LinearLayout) findViewById(R.id.JoyStick);
         //new ReloadImageView(this, 500, imgView, imgURL, textview);
-
+        /*
         tHandler.removeCallbacks(UpdateImageTask);
         tHandler.postDelayed(UpdateImageTask, 100);
+        */
         togglemode = (ToggleButton) findViewById(R.id.mode);
         automode = false;
         

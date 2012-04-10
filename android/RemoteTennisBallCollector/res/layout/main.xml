@@ -11,14 +11,14 @@
 		android:layout_height="wrap_content"
 		android:text="@string/hello"
 	/>
-<!-- 
+
     <WebView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/VideoFrameView"
         android:layout_width="300dp"
         android:layout_height="210dp"
-        android:padding="100dip" />
--->
+        android:padding="10dip" />
+<!-- 
 	<ImageView
         android:id="@+id/imgView"
         android:contentDescription="@string/liveimg"
@@ -27,7 +27,7 @@
         android:padding="10dip"
         android:scaleType="fitXY"
     />
-	
+-->	
 	<ToggleButton 
 	    android:id="@+id/mode"
 	    android:layout_width="wrap_content"
