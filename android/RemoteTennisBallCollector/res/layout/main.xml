@@ -18,16 +18,7 @@
         android:layout_width="300dp"
         android:layout_height="210dp"
         android:padding="10dip" />
-<!-- 
-	<ImageView
-        android:id="@+id/imgView"
-        android:contentDescription="@string/liveimg"
-        android:layout_width="300dp"
-        android:layout_height="210dp"
-        android:padding="10dip"
-        android:scaleType="fitXY"
-    />
--->	
+
 	<ToggleButton 
 	    android:id="@+id/mode"
 	    android:layout_width="wrap_content"
@@ -99,6 +90,16 @@
        	 	android:onClick="downButtonAction"
        	 />
     </LinearLayout>
+    
+    <ImageView
+        android:id="@+id/imgView"
+        android:contentDescription="@string/liveimg"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:padding="10dip"
+       	android:layout_marginLeft="50dp"
+        android:scaleType="fitXY"
+    />
     
     
 </LinearLayout>

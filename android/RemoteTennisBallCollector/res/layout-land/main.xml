@@ -29,14 +29,7 @@
 	    />
 
 <!-- 		
-		<ImageView
-	        android:id="@+id/imgView"
-	        android:contentDescription="@string/liveimg"
-	        android:layout_width="360dp"
-	        android:layout_height="270dp"
-	        android:padding="10dp"
-	        android:scaleType="fitXY"
-	    />
+		
 -->       
     </LinearLayout>
 	
@@ -109,6 +102,7 @@
 	       	 		android:onClick="rightButtonAction"
 		       	 />
 	       	</LinearLayout>
+	       	
 	        <ImageButton 
 	       	   	android:id="@+id/downbutton"
 	       	   	android:contentDescription="@string/downarrow"
@@ -119,7 +113,19 @@
 	       	 	android:onClick="downButtonAction"
 	       	 />
 	    </LinearLayout>
+	    
+	    <ImageView
+	        android:id="@+id/imgView"
+	        android:contentDescription="@string/liveimg"
+	        android:layout_width="200dp"
+	        android:layout_height="200dp"
+	       	android:layout_marginLeft="0dp"
+	       	android:layout_marginTop="10dp"
+	        android:scaleType="fitXY"
+	    />
         
     </LinearLayout>
+    
+    
     
 </LinearLayout>

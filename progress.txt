@@ -93,3 +93,8 @@ Getting the OpenCV to work
 http://comments.gmane.org/gmane.comp.handhelds.android.ndk/15250
 Replacing the make.exe file with latest version
 Infi bugs in the distribution supplied along with NVPACK
+
+http://www.stanford.edu/~zxwang/android_opencv.html
+
+http://www.instructables.com/id/JabberBot-The-Arduino-robot-with-an-ATMega-brain-/
+
