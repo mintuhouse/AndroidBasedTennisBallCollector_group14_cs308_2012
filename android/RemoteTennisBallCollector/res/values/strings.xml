@@ -12,5 +12,6 @@
     <string name="pick">Pick</string>
     <string name="manualmode">auto</string>
     <string name="automode">AUTO</string>
+    <string name="empty"></string>
 
 </resources>

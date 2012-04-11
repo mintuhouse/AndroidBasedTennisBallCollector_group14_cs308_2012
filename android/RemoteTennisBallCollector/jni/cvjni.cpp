@@ -20,6 +20,8 @@
 #include "cv.h"
 #include "cxcore.h"
 #include "bmpfmt.h"
+#include <stdio.h>
+
 #define ANDROID_LOG_VERBOSE ANDROID_LOG_DEBUG
 #define LOG_TAG "CVJNI"
 #define LOGV(...) __android_log_print(ANDROID_LOG_SILENT, LOG_TAG, __VA_ARGS__)
@@ -54,6 +56,85 @@ JNIEXPORT void JNICALL Java_com_eyantra_android_tennisball_OpenCV_extractSURFFea
 	}
 	cvReleaseImage(&pWorkImage);
 	cvReleaseMemStorage(&storage);
+}
+
+JNIEXPORT jintArray JNICALL Java_com_eyantra_android_tennisball_OpenCV_locateBall(
+		JNIEnv* env, jobject thiz) {
+	jintArray result = env->NewIntArray(6);
+
+	IplImage *pWorkImage=cvCreateImage(cvGetSize(pImage),IPL_DEPTH_8U,1);
+    int width 	= pImage->width;
+    int height 	= pImage->height;
+    int step 	= pImage->widthStep;
+    int channels 	= pImage->nChannels;
+    int wstep 	= pWorkImage->widthStep;
+    int wchannels	= pWorkImage->nChannels;
+
+    uchar* data 	= (uchar*)pImage->imageData;
+    uchar* wdata 	= (uchar*)pWorkImage->imageData;
+
+    int x1=-1, x2=-1, y1=-1, y2=-1;
+    int circleDetected=0;
+
+    /*
+     * Converting the Captured Image into binary format.
+     * TODO: Explain algo used
+     */
+    for(int i = 0;i < height;i++) {
+		for(int j = 0;j < width;j++) {
+			if( (data[i*step+j*channels+2] > 50+data[i*step+j*channels])
+					&& data[i*step+j*channels+2] >= 225
+					&& (data[i*step+j*channels+2] > 50+data[i*step+j*channels+1]) )
+			{
+				   wdata[i*wstep+j*wchannels] = 0;
+			}
+			else wdata[i*wstep+j*wchannels] = 255;
+		}
+	}
+
+	for(int i=0;i<width;i++){
+		int count=0;
+		for(int j=0;j<height;j++){
+			if(wdata[j*wstep+i*wchannels]==0){
+				count++;
+			}
+		}
+		if(count>10){
+			if(x1 == -1) x1 = i;
+			else x2 = i;
+		}
+	}
+
+	for(int i=0;i<height;i++){
+		int count=0;
+		for(int j=0;j<width;j++){
+			if(wdata[j*wchannels+i*wstep]==0){
+				count++;
+			}
+		}
+		if(count>10){
+			if(y1 == -1) y1 = i;
+			else y2 = i;
+		}
+	}
+
+	if(x1!=-1&&y1!=-1) circleDetected=1;
+
+	jint A[6];
+	A[0] = circleDetected;	// isCircleDetected
+	A[1] = (x1+x2)/2;		// centre - x
+	A[2] = (y1+y2)/2;		// centre - y
+	A[3] = (x2-x1+y2-y1)/4;// radius
+	A[4] = width;			// Image Width
+	A[5] = height;			// Image Height
+
+	// show features
+	cvCircle( pImage, cvPoint(A[1],A[2]), A[3], CV_RGB(255,255,0), 3, 8, 0 );
+
+	cvReleaseImage(&pWorkImage);
+
+	env->SetIntArrayRegion(result, 0, 6, A);
+	return result;
 }
 
 JNIEXPORT jboolean JNICALL Java_com_eyantra_android_tennisball_OpenCV_setSourceImage(

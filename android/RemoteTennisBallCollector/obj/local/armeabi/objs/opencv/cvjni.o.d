@@ -34,7 +34,8 @@ obj/local/armeabi/objs/opencv/cvjni.o: jni/cvjni.cpp \
  /cygdrive/c/NVPACK/android-ndk-r7b/platforms/android-8/arch-arm/usr/include/sys/syslimits.h \
  jni/cxcore/include/cxerror.h jni/cxcore/include/cvver.h \
  jni/cxcore/include/cxcore.hpp jni/cv/include/cvtypes.h \
- jni/cv/include/cv.hpp jni/cv/include/cvcompat.h jni/bmpfmt.h
+ jni/cv/include/cv.hpp jni/cv/include/cvcompat.h jni/bmpfmt.h \
+ /cygdrive/c/NVPACK/android-ndk-r7b/platforms/android-8/arch-arm/usr/include/stdio.h
 
 /cygdrive/c/NVPACK/android-ndk-r7b/platforms/android-8/arch-arm/usr/include/string.h:
 
@@ -117,3 +118,5 @@ jni/cv/include/cv.hpp:
 jni/cv/include/cvcompat.h:
 
 jni/bmpfmt.h:
+
+/cygdrive/c/NVPACK/android-ndk-r7b/platforms/android-8/arch-arm/usr/include/stdio.h:

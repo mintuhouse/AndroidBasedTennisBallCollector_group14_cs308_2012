@@ -12,6 +12,7 @@ import java.net.URLConnection;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
@@ -56,26 +57,34 @@ public class BallCollectorActivity extends Activity {
 	private TextView textview;
 	private TextView mTitle;
 	private String imgURL;
-	private Handler tHandler = new Handler();
-	private ToggleButton togglemode;
-	private boolean automode;
+	private ProgressDialog progressDialog;
 	private LinearLayout manualcontrols;
 	private AlertDialog alertDialog;
 	private OpenCV opencv = new OpenCV();
-	private static final int MODE_ID = Menu.FIRST;
+	private Handler tHandler = new Handler();	
+
+	private ToggleButton togglemode;
+	private boolean automode;
+	
+	private static final int PROCESS_ID = Menu.FIRST;
 	private static final int HELP_ID = Menu.FIRST + 1;
 	private static final int CONNECT_ID = Menu.FIRST + 2;
 	
 	// Debugging
 	protected static final String TAG = BallCollectorActivity.class.getSimpleName();
 	private static final boolean D = true;	
+	
+	private boolean BTConnected;
 
     // Intent request codes
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
     private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
 	
-    // Message types sent from the BluetoothChatService Handler
+    /*
+     *  Message types sent from the BluetoothChatService Handler
+     *  Note: Not Used
+     */    
     public static final int MESSAGE_STATE_CHANGE = 1;
     public static final int MESSAGE_READ = 2;
     public static final int MESSAGE_WRITE = 3;
@@ -86,89 +95,24 @@ public class BallCollectorActivity extends Activity {
     public static final String DEVICE_NAME = "device_name";
     public static final String TOAST = "toast";	
     
-    private String mConnectedDeviceName;
-    private BluetoothAdapter mBluetoothAdapter;
-	private Bluetooth mBTClient;
-	private WakeLock wl;
-    
+	private Bluetooth mBTClient = null;
+	private BluetoothAdapter mBTAdapter = null;   
 	
-    private final Handler mHandler = new Handler() {
-		@Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-            case MESSAGE_STATE_CHANGE:
-                if(D) Log.i(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
-                switch (msg.arg1) {
-                case Bluetooth.STATE_NONE:
-                	mTitle.setText("Not connected");
-                    break;
-                case Bluetooth.STATE_CONNECTING:
-                	mTitle.setText("Connecting...");
-                    break;
-                case Bluetooth.STATE_CONNECTED:
-                	mTitle.setText("Connected to: " + mConnectedDeviceName);
-                    onDeviceConnected();
-                    break;
-                case Bluetooth.STATE_FAILED:
-                	mTitle.setText("Connection lost :-(");
-                    break;
-                }
-                break;
-            case MESSAGE_WRITE:
-            	if (D) {
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    String writeMessage = new String(writeBuf);
-                    Log.d(TAG, "TX: \"" + writeMessage + "\"");
-            	}
-                break;
-            case MESSAGE_READ:
-            	if (D) {
-                	try {
-                		byte[] readBuf = (byte[]) msg.obj;
-        				String readMessage = new String(readBuf, 0, msg.arg1);
-                        Log.d(TAG, "RX: \"" + readMessage + "\"");
-                	}
-                	catch ( Exception ex) {
-                		Log.e(TAG, ex.getMessage(), ex);
-                	}
-            	}
-                break;
-            case MESSAGE_DEVICE_NAME:
-                // save the connected device's name
-                mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
-                Toast.makeText(getApplicationContext(), "Connected to " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                break;
-            case MESSAGE_TOAST:
-                Toast.makeText(getApplicationContext(), msg.getData().getString(TOAST), Toast.LENGTH_SHORT).show();
-                break;
-            }
-        }
-    };
-    
+	// Sytem state info
+	private int systemState;
+	
+	public static final int SYSTEM_INITIAL = 1;
+	public static final int SYSTEM_BALL_INVIEW = 2;
+	public static final int SYSTEM_BALL_INCENTER = 3;
+	public static final int SYSTEM_BALL_MOVEDOUT = 4;
+	public static final int SYSTEM_BALL_PICKED = 5;
+	
+	private static final int SENDTIME = 1000;	
+	private static final int AUTOTIMER = 2000;	
 
-	private void onDeviceConnected() {
-		//jabberClient.sendReset();
-		
-		mHandler.postDelayed(new Runnable() {
-			public void run() {
-				//jabberClient.playSound(1, 1, 1);
-				mHandler.postDelayed(new Runnable() {
-					public void run() {
-						//jabberClient.playSound(1, 255, 2);
-						mHandler.postDelayed(new Runnable() {
-							public void run() {
-								//jabberClient.playSound(3, 255, 1);
-							}
-						}, 500);
-					}
-				}, 5000);
-			}
-		}, 100);
-		
-		//vVol.setProgress(prefs.getLastVolume());
-		//vCtrl.setVolume(prefs.getLastVolume());
-	}
+	byte[] write_buffer = new byte[1];
 	
+	private boolean backButtonPressed;
     
  	// Open the webpage inline in the application
     private class VideoWebViewClient extends WebViewClient {
@@ -197,6 +141,12 @@ public class BallCollectorActivity extends Activity {
         }
     }		
 	
+    
+    /*
+     * Open HTML Authentication protected HttpConnection
+     * String strURL	: URL of the website
+     * return	: InputStream of HttpConnection
+     */
 	private InputStream OpenHttpConnection(String strURL)
             throws IOException {
         URLConnection conn = null;
@@ -216,30 +166,117 @@ public class BallCollectorActivity extends Activity {
         return inputStream;
     }
 	
+	/*
+	 * Grab an image from URL and convert it into a 
+	 * Drawable (a format for displaying in an ImageView)
+	 */
 	private Drawable grabImageFromUrl(String url) throws Exception {
 		//return Drawable.createFromStream((InputStream)new URL(url).getContent(), "src");
 		return Drawable.createFromStream((InputStream)OpenHttpConnection(url),"src");
 	}	
-
+	
+	/*
+	 * Grab an image from URL and convert it into a 
+	 * Bitmap (a format for displaying in an ImageView)
+	 */
 	private Bitmap getBitmapImage(String url) throws Exception {
 		return BitmapFactory.decodeStream((InputStream)OpenHttpConnection(url));
 	}
 	
-	private Runnable UpdateImageTask = new Runnable(){
+	/*
+	 * Cron Task which updated an image at regular intervals
+	 * 
+	 */
+	private Runnable ProcessImageTask = new Runnable(){
 		public void run(){
 			long ms = SystemClock.uptimeMillis();
         	String iurl = imgURL+"?dummy="+ ms;
             textview.setText("Displaying "+ iurl);
-        	try {
+        	/* Note: Redundant not used
+        	 * try {
     		    imgView.setImageDrawable(grabImageFromUrl(iurl));
     		} catch(Exception e) {
     			imgView.setImageResource(R.drawable.notfound);
     		    textview.setText("Error: Exception");
+    		}*/
+        	try{
+	        	Bitmap bitmap = getBitmapImage(imgURL);
+				imgView.setImageBitmap(bitmap);
+				int width = bitmap.getWidth();
+				int height = bitmap.getHeight();
+				int[] pixels = new int[width * height];
+				bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+				//opencv.setSourceImage(pixels, width, height);
+				if(!opencv.setSourceImage(pixels, width, height)){ 
+				    Log.d("setSourceIMage:", "Error occurred while setting the source image pixels"); 
+				} 
+				long start = System.currentTimeMillis();
+				int[] result = opencv.locateBall();
+				long end = System.currentTimeMillis();
+				boolean ballInView = (result[0]==1);
+				int centerX=result[1], centerY=result[2], radius=result[3];
+				boolean leftOfCenter = (ballInView && (centerX < (width*4)/9));
+				boolean rightOfCenter = (ballInView && (centerX > (width*5)/9));
+				boolean inCenter = (ballInView && (centerX >= (width*4)/9) && (centerX <= (width*5)/9) );
+				/** systemState values
+					SYSTEM_INITIAL = 1
+					SYSTEM_BALL_INVIEW = 2
+					SYSTEM_BALL_INCENTRE = 3
+					SYSTEM_BALL_MOVEDOUT = 4
+					SYSTEM_BALL_PICKED = 5
+				*/
+				// If Ball is in Camera's field of view
+				if(ballInView){
+					switch(systemState) {
+					case SYSTEM_INITIAL:
+						systemState=SYSTEM_BALL_INVIEW;
+					case SYSTEM_BALL_INVIEW:
+						if(!inCenter){
+							if(leftOfCenter){
+								sendMessage('l',SENDTIME);
+							} else {
+								sendMessage('r',SENDTIME);
+							}
+							break;
+						}
+						systemState=SYSTEM_BALL_INCENTER;
+					case SYSTEM_BALL_INCENTER:
+						if(inCenter) {
+							systemState=SYSTEM_BALL_INCENTER;
+							sendMessage('F',SENDTIME);
+						} else {
+							systemState=SYSTEM_BALL_INVIEW;
+							if(leftOfCenter){
+								sendMessage('l',SENDTIME);
+							} else {
+								sendMessage('r',SENDTIME);
+							}
+						}
+						break;
+					}
+				// Ball doesn't appear in its field of view
+				} else {
+					switch(systemState){
+					case SYSTEM_INITIAL:
+						sendMessage('l',SENDTIME);
+						break;
+					default:
+						systemState=SYSTEM_BALL_PICKED;
+						//Stop execution of code.
+						textview.setText("Ball successfully picked!");
+					}
+				}
+				byte[] imageData = opencv.getSourceImage();
+				long elapse = end - start;
+				textview.setText(elapse+"ms is used to process Image.");
+				bitmap = BitmapFactory.decodeByteArray(imageData, 0,imageData.length);
+				imgView.setImageBitmap(bitmap);
+        	}catch(Exception e) {
+    			imgView.setImageResource(R.drawable.notfound);
+    		    textview.setText("Error: Exception");
     		}
-			
-			tHandler.postAtTime(this, ms+1000);
-		}
-		
+			tHandler.postAtTime(this, ms+AUTOTIMER);
+		}		
 	};
 	
 	
@@ -247,82 +284,23 @@ public class BallCollectorActivity extends Activity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	backButtonPressed = false;
+    	
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        // Open the Video stream in application     
-        VideoFrame = (WebView) findViewById(R.id.VideoFrameView);
-        VideoFrame.setClickable(false);
-        VideoFrame.getSettings().setJavaScriptEnabled(true);
-        VideoFrame.loadUrl("http://192.168.137.16/ipcam.asp");
-        VideoFrame.setWebViewClient(new VideoWebViewClient());
-        
-        
-        //imgURL = "http://www.google.co.in/images/srpr/logo3w.png";
-        imgURL = "http://192.168.137.16/snapshot.jpg";
-        
-        textview = (TextView) findViewById(R.id.textview);
-        imgView = (ImageView) findViewById(R.id.imgView);
-        manualcontrols = (LinearLayout) findViewById(R.id.JoyStick);
-        //new ReloadImageView(this, 500, imgView, imgURL, textview);
-        /*
-        tHandler.removeCallbacks(UpdateImageTask);
-        tHandler.postDelayed(UpdateImageTask, 100);
-        */
-        togglemode = (ToggleButton) findViewById(R.id.mode);
-        automode = false;
-        
-        togglemode.setOnCheckedChangeListener(modelistener);
+        setupUI();        
 
-        alertDialog = new AlertDialog.Builder(this).create();
-        
-        //prefs = new Prefs(this);
-		
-        // Set up the window layout
-        //requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-		//setContentView(R.layout.dualstick);
-        //getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title);
-
-        //jabberClient = new JabberClient(this);
-        
-        // Set up the custom title
-        mTitle = (TextView) findViewById(R.id.textview);
-        //mTitle.setText(R.string.app_name);
-        //mTitle = (TextView) findViewById(R.id.title_right_text);
-
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter != null) {
+        mBTAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBTAdapter != null) {
             // Initialize the BluetoothChatService to perform bluetooth connections
-        	mBTClient = new Bluetooth(this, mHandler);
+        	
         }
         else {
           Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
           finish();
           return;
-        }
-        
-        //PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-        //wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, TAG);
-        //wl.acquire();
-        
-		//setupUI();			
-    }
-    
-
-    @Override
-    protected void onPause() {
-    	super.onPause();
-        wl.release();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        
-        //jabberClient.sendReset();
-        if (mBTClient != null) mBTClient.stop();
-        
-        if(D) Log.e(TAG, "--- ON DESTROY ---");
+        }        		
     }
 
     @Override
@@ -331,113 +309,170 @@ public class BallCollectorActivity extends Activity {
         if(D) Log.e(TAG, "++ ON START ++");
 
         // If BT is not on, request that it be enabled.
-        // setupChat() will then be called during onActivityResult
-        if ( mBluetoothAdapter != null ) {
-            if (!mBluetoothAdapter.isEnabled()) {
+        // Response will be recorded will then be called during onActivityResult
+        if ( mBTAdapter != null ) {
+            if (!mBTAdapter.isEnabled()) {
                 Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
             } else {
-            	startConnectDeviceSecure();
+            	BTConnect();
             }
         }
+        
     }
     
+    public void BTConnect(){
+		mBTClient = new Bluetooth(this);
+		Toast.makeText(this, "Connecting...", Toast.LENGTH_LONG).show();
+		try {
+			Log.d(TAG, "Initialisation Started...");
+			
+			/** Bluetooth initialise function returns true if connection is succesful, else false. */
+			if(mBTClient.Initialise() == false) 
+			{
+				Toast.makeText(this, " No connection established ", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			else 
+			{
+				Toast.makeText(this, " Connection established ", Toast.LENGTH_SHORT).show();
+				BTConnected=true;
+			}
+			Log.d(TAG, "Initialisation Successful");
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.e(TAG, "Initialisation Failed");
+		}
+    }
     
-    private void connectDevice(Intent data, boolean secure) {
-        if (mBluetoothAdapter != null) {
-            // Get the device MAC address
-            String address = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-            // Get the BLuetoothDevice object
-            BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
-            // Attempt to connect to the device
-            mBTClient.connect(device, secure);
-        }
+    public void BTDisconnect(){
+    	Log.d(TAG,"Disonnect Requested");    
+		if(mBTClient != null) mBTClient.free_channel(); /**Free up the BT channel. */
+		Toast.makeText(this, " Bluetooth disconnected ", Toast.LENGTH_SHORT).show();		
+		BTConnected = false;
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(D) Log.d(TAG, "onActivityResult " + resultCode);
-        switch (requestCode) {
-        case REQUEST_CONNECT_DEVICE_SECURE:
-            // When DeviceListActivity returns with a device to connect
-            if (resultCode == Activity.RESULT_OK)
-                connectDevice(data, true);
-            break;
-        case REQUEST_CONNECT_DEVICE_INSECURE:
-            // When DeviceListActivity returns with a device to connect
-            if (resultCode == Activity.RESULT_OK)
-                connectDevice(data, false);
-            break;
-        case REQUEST_ENABLE_BT:
-            // When the request to enable Bluetooth returns
-            if (resultCode == Activity.RESULT_OK) {
-                // Bluetooth is now enabled, so set up a chat session
-                startConnectDeviceSecure();
-            } else {
-                // User did not enable Bluetooth or an error occured
-                Log.e(TAG, "BT not enabled");
-                Toast.makeText(this, "BT not enabled, exiting", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        }
+    public boolean sendMessage(char send) {
+		try {  	
+			write_buffer[0] = (byte)send;	
+			try {mBTClient.BluetoothSend(write_buffer);   
+			}
+			catch (Exception e){e.printStackTrace();
+			}
+			if(D){
+				String b = new String (write_buffer);
+				//Toast.makeText(this, "Sending..."+b+"s",Toast.LENGTH_LONG).show();
+			}
+		}
+		catch (Exception e){e.printStackTrace();
+		}
+		Log.d(TAG, "Write on button press successful");  
+		return true;
     }
-
-    public void sendMessage(byte[]send) {
-    	sendMessage(send, 0, send.length);
-    }
-    
-    public void sendMessage(byte[]send, int len) {
-    	sendMessage(send, 0, len);
+    /** 
+     * Send message `send` to Firebird and disable clicks for block seconds
+     * @param send  - message to be sent
+     * @param block - time for which the System messages are to be blocked.
+     * @return whether the message is sent
+     */
+    public boolean sendMessage(char send, int block){
+    	boolean s = sendMessage(send);
+		disableClicks(block, 1);
+    	return s;
     }
     
     /**
-     * Sends a message.
-     * @param message  A string of text to send.
+     * Disable clicks for time `time` seconds
+     * @param time
      */
-    private void sendMessage(byte[] send, int offset, int length) {
-    	if ( mBTClient != null ) {
-            // Check that we're actually connected before trying anything
-            if (mBTClient.getState() != Bluetooth.STATE_CONNECTED) {
-                //Toast.makeText(this, "Not connected", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Check that there's actually something to send
-            if (send != null && send.length > 0) {
-                mBTClient.write(send);
-            }
+    public void disableClicks(int time, int processID){
+    	progressDialog.setTitle(R.string.empty);
+    	switch(processID){
+    	case 1:
+    		progressDialog.setMessage("Sending. Please wait ...");
+    		break;
+    	case 2:
+    		progressDialog.setMessage("Processing. Please wait ...");
+    		break;
     	}
+    	progressDialog.setCancelable(false);
+    	progressDialog.show();
+    	
+    	Handler handler = null;
+        handler = new Handler(); 
+        handler.postDelayed(new Runnable(){ 
+             public void run(){
+            	 if(progressDialog.isShowing()){
+	                 progressDialog.cancel();
+	                 progressDialog.dismiss();
+            	 }
+             }
+        }, time);
     }
     
-
+    /**
+     * Setup the UI & Listeners
+     */
 	private void setupUI() {
-		/* NOT NEEDED
-		Button b1 = (Button)findViewById(R.id.b1);
-		b1.setOnClickListener(new OnClickListener() {
-			byte[] z = new byte[] { 'r', (byte)1 };
-			@Override
-			public void onClick(View v) {
-				sendMessage(z);
-			}
-		});*/
 
+        // Open the Video stream in application     
+        VideoFrame = (WebView) findViewById(R.id.VideoFrameView);
+        VideoFrame.setClickable(false);
+        VideoFrame.getSettings().setJavaScriptEnabled(true);
+        VideoFrame.loadUrl("http://192.168.137.16/ipcam.asp");
+        VideoFrame.setWebViewClient(new VideoWebViewClient());        
+        
+        //imgURL = "http://www.google.co.in/images/srpr/logo3w.png";
+        imgURL = "http://192.168.137.16/snapshot.jpg";
+        
+        textview = (TextView) findViewById(R.id.textview);
+        imgView = (ImageView) findViewById(R.id.imgView);
+        manualcontrols = (LinearLayout) findViewById(R.id.JoyStick);
+
+        alertDialog = new AlertDialog.Builder(this).create();   
+        progressDialog = new ProgressDialog(this);
+
+        if(!BTConnected) BTConnected=false;
+        
+        togglemode = (ToggleButton) findViewById(R.id.mode);
+        automode = false;        
+        togglemode.setOnCheckedChangeListener(modelistener);
+        
+        // Set up the custom title
+        mTitle = (TextView) findViewById(R.id.textview);
+        
 	}
     
     @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		menu.add(0, MODE_ID, 0, "Mode");
+		menu.add(0, PROCESS_ID, 0, "Process Image");
 		menu.add(0, HELP_ID, 0, "Help");
 		menu.add(0, CONNECT_ID, 0, "Connect");
 		return true;
 	}
     
     @Override
+    public boolean onPrepareOptionsMenu(final Menu menu) {       
+        if(BTConnected) 
+             menu.findItem(CONNECT_ID).setTitle("Disconnect"); 
+        else 
+             menu.findItem(CONNECT_ID).setTitle("Connect"); 
+        return super.onPrepareOptionsMenu(menu); 
+   }
+    
+    @Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		switch (item.getItemId()) {
-		case MODE_ID:
-        	tHandler.removeCallbacks(UpdateImageTask);
+		/**
+		 *  Use this only for debugging purposes.
+		 *  Will remove 
+		 */
+		case PROCESS_ID:
+        	tHandler.removeCallbacks(ProcessImageTask);
         	try{
+        		//TODO: Check if is in AUTOMODE
         		Bitmap bitmap = getBitmapImage(imgURL);
 				imgView.setImageBitmap(bitmap);
 				int width = bitmap.getWidth();
@@ -449,7 +484,7 @@ public class BallCollectorActivity extends Activity {
 				    Log.d("setSourceIMage:", "Error occurred while setting the source image pixels"); 
 				} 
 				long start = System.currentTimeMillis();
-				opencv.extractSURFFeature();
+				int[] result = opencv.locateBall();
 				long end = System.currentTimeMillis();
 				byte[] imageData = opencv.getSourceImage();
 				long elapse = end - start;
@@ -462,57 +497,78 @@ public class BallCollectorActivity extends Activity {
     			imgView.setImageResource(R.drawable.notfound);
     		    textview.setText("Error: Exception");
     		}
-			/*Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-			long timeTaken = System.currentTimeMillis();
-			mCurrentImagePath = IMAGE_DIRECTORY + "/"
-					+ Utility.createName(timeTaken) + ".jpg";
-			Log.i(TAG, mCurrentImagePath);
-			cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-					Uri.fromFile(new File(mCurrentImagePath)));
-			startActivityForResult(cameraIntent, ACTIVITY_SELECT_CAMERA);*/
 			return true;
 		case HELP_ID:
-			/*Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-					Images.Media.INTERNAL_CONTENT_URI);
-			startActivityForResult(galleryIntent, ACTIVITY_SELECT_IMAGE);*/
+			// sending test string...			
+			try {
+				sendMessage('H');
+			}
+			catch (Exception e){e.printStackTrace();
+			}
+			Log.d(TAG, "Write on button press successful"); 
 			return true;
 		case CONNECT_ID:
-			startConnectDeviceSecure();
+			if(BTConnected)
+				BTDisconnect();
+			else
+				BTConnect();
             return true;
 		}
-
 		return super.onMenuItemSelected(featureId, item);
 	}
-    
-	private void startConnectDeviceSecure() {
-		if ( mBluetoothAdapter != null ) {
-			Intent serverIntent;
-			serverIntent = new Intent(this, DeviceListActivity.class);
-			mTitle.setText("Attempting to connect");
-			startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
-		}
-	}
 
     
-    /** Called when the activity is destroyed */
+    /** 
+     * Called when the activity is destroyed 
+     * @param savedInstanceState
+     */
     public void onDestroy(Bundle savedInstanceState){
-    	tHandler.removeCallbacks(UpdateImageTask);
+    	tHandler.removeCallbacks(ProcessImageTask);
     	super.onDestroy();
+    	if(mBTClient != null){
+			mBTClient.free_channel();}
     }
     
-    /*
+    /**
      * (non-Javadoc)
      * @see android.app.Activity#onKeyDown(int, android.view.KeyEvent)
-     * To Implement Back Button in WebView
+     * To Implement Back Button
+     */
 	@Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK) && VideoFrame.canGoBack()) {
-            VideoFrame.goBack();
+            if(backButtonPressed) finish();
+            else {
+            	Toast.makeText(this, "Press once more to exit", Toast.LENGTH_LONG).show();
+			    backButtonPressed=true;
+            }
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
-    */
+    
+    /** Called when the activity resumes after prompting user to turn ON the bluetooth. 
+	 * If turned ON, goes ahead with application, else closes the connection and stops application.
+	 */
+	public void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		Log.d(TAG, "onActivityResult " + resultCode);
+		if (requestCode == REQUEST_ENABLE_BT) 
+		{
+			/** When the request to enable Bluetooth returns. */
+			if (resultCode == Activity.RESULT_OK) {
+				Log.d(TAG,"BT Enabled");
+				Toast.makeText(this, "Bluetooth enabled", Toast.LENGTH_LONG).show();
+				// Bluetooth is now enabled
+			} else {
+				// User did not enable Bluetooth or an error occured
+				Log.d(TAG, "BT not enabled");
+				Toast.makeText(this, "Bluetooth was not enabled. Closing application..", Toast.LENGTH_LONG).show();
+				finish();  /** Terminate the activity and close application. */
+				return;
+			}
+		}
+	}
     
     
     public void addListenerOnJoyStick(){
@@ -525,28 +581,23 @@ public class BallCollectorActivity extends Activity {
     }
     
     public void upButtonAction(View v){
-    	alertDialog.setTitle("Up Button Pressed.");
-    	alertDialog.show();
+    	sendMessage('F',SENDTIME);
     }
     
     public void downButtonAction(View v){
-    	alertDialog.setTitle("Down Button Pressed.");
-    	alertDialog.show();    	
+    	sendMessage('B',SENDTIME);
     }
     
     public void leftButtonAction(View v){
-    	alertDialog.setTitle("Left Button Pressed.");
-    	alertDialog.show();    	
+    	sendMessage('L',SENDTIME);
     }
  
     public void rightButtonAction(View v){
-    	alertDialog.setTitle("Right Button Pressed.");
-    	alertDialog.show();    	
+    	sendMessage('R',SENDTIME);
     }
     
     public void pickButtonAction(View v){
-    	alertDialog.setTitle("Pick Button Pressed.");
-    	alertDialog.show();    	
+    	sendMessage('P',SENDTIME);
     }
     
     OnCheckedChangeListener modelistener = new OnCheckedChangeListener() {
@@ -554,10 +605,11 @@ public class BallCollectorActivity extends Activity {
             if(isChecked){
             	manualcontrols.setVisibility(LinearLayout.GONE);
             	imgView.setVisibility(ImageView.VISIBLE);
-            	tHandler.removeCallbacks(UpdateImageTask);
-                tHandler.postDelayed(UpdateImageTask, 100);
+            	tHandler.removeCallbacks(ProcessImageTask);
+                systemState = SYSTEM_INITIAL;
+                tHandler.postDelayed(ProcessImageTask, AUTOTIMER);
             } else {
-            	tHandler.removeCallbacks(UpdateImageTask);
+            	tHandler.removeCallbacks(ProcessImageTask);
             	imgView.setVisibility(ImageView.GONE);
             	manualcontrols.setVisibility(LinearLayout.VISIBLE);
             }
