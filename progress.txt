@@ -54,7 +54,11 @@ Steps Involved:
 	- Connect your PC to Local Network via Ethernet cable.
 	- Set the IP address.
 		(For ERTS Lab)
+
 		IPv4 Address 		10.129.154.194
+
+		IPv4 Address 		10.129.154.143
+
 		IPv4 Subnet Mask	255.255.128.0
 		IPv4 Default Gateway10.129.250.1
 		IPv4 DNS Server		10.129.1.1
@@ -73,6 +77,7 @@ Steps Involved:
 	- Use following links to get live stream.
 		http://192.168.137.16/snapshot.jpg?dummy=<somerandomnumber>		- to get the current snapshot from the IPCam
 		http://192.168.137.16/mjpg/video.mjpg							- to get Live Video Streaming
+		http://192.168.137.16/ipcam.
 	
 	
 - Trouble Shooting with IPCam - reset it(no other way :P) and begin from the start.
@@ -83,4 +88,13 @@ Solutions tried:
 	- Rooted the mobile. Installed and tried various apps which claimed various features - none of this worked.
 	- Finally following viedo helped us.
 	http://www.youtube.com/watch?v=klHzMyYFGeQ
-	It describes how to create a WLAN network bridge in your PC (which served as a Interface mode WiFi connection).
+	It describes how to create a WLAN network bridge in your PC (which served as a Interface mode WiFi connection). 
+
+Getting the OpenCV to work
+http://comments.gmane.org/gmane.comp.handhelds.android.ndk/15250
+Replacing the make.exe file with latest version
+Infi bugs in the distribution supplied along with NVPACK
+
+http://www.stanford.edu/~zxwang/android_opencv.html
+
+http://www.instructables.com/id/JabberBot-The-Arduino-robot-with-an-ATMega-brain-/

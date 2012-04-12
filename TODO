@@ -1,0 +1,229 @@
+/******************************************************************************/
+This file is meant to track and record the ideas of Project developers along the
+course of development.
+It Includes:
+    * Aim of the project
+    * Ideas (which might be) implemented.
+    * Works Left
+    * Work Assignment
+    * Challenges
+
+/******************************************************************************/
+
+AIM
+* Make an android controller for Firebird V
+(Take it from SRS, which vinod is writing)
+
+
+
+
+
+
+/******************************************************************************/
+
+DESCRIPTION
+
+Code Organization
+- Android Application Code
+    - Android Setup
+        http://www.stanford.edu/class/ee368/Android/Tutorial-1-Basic-Android-Setup-Linux.pdf
+    - Image Processing Code - OpenCV
+        http://www.stanford.edu/class/ee368/Android/Tutorial-2-OpenCV-for-Android-Setup-Linux.pdf
+- Firebird Controller Code
+    - RTOS/muCos/Esterel - whatever
+- Video Transmission Code
+    - TODO:yet to be decided.
+
+
+/******************************************************************************/
+
+Ideas:
+
+* Extend the connection to GSM
+ie., by using mobile sim cards, now we are limited by geographical locations
+we can even use SIM cards to transmit live video via videocalling. (3G)
+* Make the connection using TCP/IP i.e, using mobile's WiFi.
+Similar to https://github.com/saifhhasan/firebird_android_controller
+but we may have to 
+* We can use the Android API for firebird - a project by Darshan and group.
+
+
+Combine the following projects:
+    Robotic arm mvmt project
+    Controlling Firebird V using an Android based phone via Bluetooth
+        http://www.e-yantra.org/home/projects-wiki/item/140-controlling-firebird-v-using-an-android-based-phone-via-bluetooth-controlling-firebirdv-atmega2560
+    Tennis Ball Collector using ATmega 2560 Robot
+        http://www.e-yantra.org/home/projects-wiki/item/131-tennis-ball-collector-using-atmega-2560-robot
+Fork:
+    TCP/IP project
+    Android API
+
+/******************************************************************************/
+
+
+TODO:
+
+* We need to learn
+    - Java (most  of the Android code will be in Java)
+    - Android API, using its simulator
+    - Xbee, RTOS usage
+    - Read and research about various projects available online.
+    - Latex how to use it - writing templates in it.
+
+* Search 
+    - how to transmit video to android - explore possible ways
+
+
+/******************************************************************************/
+
+REPORT
+Just have a look at any of the project report in 
+ http://www.stanford.edu/class/ee368/Project_11/index.html 
+ to get a flavour our how should out project report be like.
+    
+
+* Create a latex report template
+    - Write a reade file for automatic report generation.
+    - Separate template from main content
+* Include all step by step procedures to install, and do project to even a noob
+ in a project report.
+    - Appendices 
+        - to give addtional info like various installations and usage guides
+* Include costs of various items in the Report
+* Index of Report - tentative (taken from DBIS SRS)
+    1.Introduction
+        1.1.Overall Description
+        1.2.Definitions
+        1.3.Requirement Specification
+        1.4.References
+        1.5.Developer Responsibilities
+    2.Implementation
+        2.1.Product Perspective
+        2.2.Product Functions Overview
+        2.3.User Flowchart & System Design
+        2.3.User Characteristics
+        2.4.General contraints and assumptions
+        2.6.Additional Hardware
+    3.Functional Requirements
+        3.x.<each feature e.g. bluetooth>
+    4.Implementation of Functional Requirements
+        Working - explain with diagrams
+        4.x.y.( subparts and explain code )
+    5.External Interface Requirements
+        5.1.Android Application
+        5.2.Embedded Systems
+        5.3.Hardware
+            Describe the implementation and reproduction of various hardware/mechanical parts used
+            explain with diagrams
+    6.Usage Settings
+        various settings which are to be made to use the project
+    7.Development
+        7.1.Settings & Configuration
+            say for communication e.g. serial, bluetooth, WiFi
+            7.1.1.Environment
+                (i) FB5 
+                (ii)Android
+            7.1.2.Project (adjustable)
+        7.2.Utilities     
+            7.2.1.Hardware
+            7.2.2.Software   
+        7.3.Code Description
+            Just copy paste the commented code here
+        7.4.Instruction Execution
+    8.Performance Characteristics
+    9.Design Constraints
+        (These contraints can be overcomed)
+    10.Tesing
+        10.1.Criteria
+            test cases
+        10.2.Results
+    11.Troubleshooting
+        11.1.Delays
+        11.2.something not working?
+    12.Individual Roles and contribution
+        include learnings
+    13.Roadmap
+        expected deadlines and completion
+    14.Challenges and Innovation
+        14.1.Github Repo
+            properly maintained and all codes are commited regularly
+        14.2.Bugs & Fixes
+    15.Bug Report
+        Unfixed bugs
+    16.Reusability
+        for name sake
+    17.Future Work
+    18.Conclusion
+
+We may instead divide the above Report into two parts
+    One for usage and other for developers
+
+
+/******************************************************************************/
+
+Challenges
+* Transmit live video to android mobile.
+    - Camera to be mounted on Bot, but how to receive it on android mobile
+        - Bluetooth
+            - Slow
+            . found a few links but no concrete idea yet
+        - WiFi
+            + Fast
+            - More difficult in implementing
+
+* Doing the image processing on Android mobile.
+    - Using OpenCV
+        + Stanford Lab already does it.
+            http://www.stanford.edu/class/ee368/Android/
+* 
+
+
+/******************************************************************************/
+
+TIMETABLE
+* Every Week:
+    - Project team meet (2 hrs)
+    - followed by code review and merging of code.
+* After every bug fix, feature addition, etc make a commit and push it to your 
+ branch. Use a meaningful commit message for every commit
+
+TIMELINE/              WORK                           STATUS
+DEADLINE
+02nd Mar : Project SRS                              - missed
+06th Mar : Team Meet 1                              - 
+            - Setting up git repos  
+07th Mar : Project Presentation                     - working
+16th Mar : Team Meet 2                              -
+            - Planning, allotment (concrete)
+22nd Mar : Team Meet 3
+            - work review
+25th Mar : Team Meet 3                              - 
+            - Make independent modules work
+              * establishing connection
+              * android application
+              * live video streaming
+              * FB5 codes - review all assignments
+29th Mar : Team Meet 4                              -
+            - Full Application alpha version
+            - discuss further enhancements
+            - Decide on Report Template
+31st Apr : Team Meet 5                              -
+            - Implementation of enhancements
+            - Beta release
+            - Discuss report content, website showcase
+07th Apr : Team Meet 6                              -
+            - Complete Code review, checking
+             Project Report, website, video, Github wiki,
+             Demo Reharsal
+
+
+
+
+/******************************************************************************/
+
+Thoughts :P
+* Lack of clarity - a bliss or despair?
+Clarity leads to self-confidence, which in might turn to over-confidence sometimes and make to go through some grave situations.
+On the other hand, if you lack the clarity, you would always strive to acheive it and during the process of acheiving it, you would assimilate what ever you know at that point of time and might even explore many new topics, which you might have never known had you had the clarity.
+
+
