@@ -149,7 +149,7 @@ public class BallCollectorActivity extends Activity {
      */
 	private InputStream OpenHttpConnection(String strURL)
             throws IOException {
-long start = System.currentTimeMillis();
+		long start = System.currentTimeMillis();
         URLConnection conn = null;
         InputStream inputStream = null;
         URL url = new URL(strURL);        
@@ -164,9 +164,6 @@ long start = System.currentTimeMillis();
         if (httpConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
             inputStream = httpConn.getInputStream();
         }
-long end = System.currentTimeMillis();
-long elapse = end - start;
-textview.setText(elapse+"ms is used to open HTTP Connection.");
         return inputStream;
     }
 	
@@ -206,9 +203,6 @@ textview.setText(elapse+"ms is used to open HTTP Connection.");
         	try{
 				long start = System.currentTimeMillis();
 	        	Bitmap bitmap = getBitmapImage(imgURL);
-long end = System.currentTimeMillis();
-long elapse = end - start;
-//textview.setText(elapse+"ms is used to download Image.");
 				imgView.setImageBitmap(bitmap);
 				int width = bitmap.getWidth();
 				int height = bitmap.getHeight();
@@ -219,9 +213,6 @@ long elapse = end - start;
 				    Log.d("setSourceIMage:", "Error occurred while setting the source image pixels"); 
 				} 
 				int[] result = opencv.locateBall();
-end = System.currentTimeMillis();
-elapse = end - start;
-//textview.setText(elapse+"ms is used to process Image.");
 				boolean ballInView = (result[0]==1);
 				int centerX=result[1], centerY=result[2], radius=result[3];
 				//boolean leftOfCenter = (ballInView && (centerX < (width*4)/9));
@@ -279,16 +270,12 @@ elapse = end - start;
 						textview.setText("Ball successfully picked!");
 					}
 				}
-
-end = System.currentTimeMillis();
-elapse = end - start;
-//textview.setText(elapse+"ms is send image.");
 				byte[] imageData = opencv.getSourceImage();
 				bitmap = BitmapFactory.decodeByteArray(imageData, 0,imageData.length);
 				imgView.setImageBitmap(bitmap);
-end = System.currentTimeMillis();
-elapse = end - start;
-//textview.setText(elapse+"ms is used to complete process Image.");
+				long end = System.currentTimeMillis();
+				long elapse = end - start;
+				textview.setText(elapse+"ms is used to complete process Image.");
         	}catch(Exception e) {
     			imgView.setImageResource(R.drawable.notfound);
     		    textview.setText("Error: Exception");
