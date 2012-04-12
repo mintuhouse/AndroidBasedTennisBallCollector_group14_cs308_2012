@@ -54,7 +54,7 @@ Steps Involved:
 	- Connect your PC to Local Network via Ethernet cable.
 	- Set the IP address.
 		(For ERTS Lab)
-		IPv4 Address 		10.129.154.249
+		IPv4 Address 		10.129.154.143
 		IPv4 Subnet Mask	255.255.128.0
 		IPv4 Default Gateway10.129.250.1
 		IPv4 DNS Server		10.129.1.1

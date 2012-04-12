@@ -107,8 +107,8 @@ public class BallCollectorActivity extends Activity {
 	public static final int SYSTEM_BALL_MOVEDOUT = 4;
 	public static final int SYSTEM_BALL_PICKED = 5;
 	
-	private static final int SENDTIME = 1000;	
-	private static final int AUTOTIMER = 2000;	
+	private static final int SENDTIME = 500;	
+	private static final int AUTOTIMER = 1000;	
 
 	byte[] write_buffer = new byte[1];
 	
@@ -149,6 +149,7 @@ public class BallCollectorActivity extends Activity {
      */
 	private InputStream OpenHttpConnection(String strURL)
             throws IOException {
+long start = System.currentTimeMillis();
         URLConnection conn = null;
         InputStream inputStream = null;
         URL url = new URL(strURL);        
@@ -163,6 +164,9 @@ public class BallCollectorActivity extends Activity {
         if (httpConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
             inputStream = httpConn.getInputStream();
         }
+long end = System.currentTimeMillis();
+long elapse = end - start;
+textview.setText(elapse+"ms is used to open HTTP Connection.");
         return inputStream;
     }
 	
@@ -191,7 +195,7 @@ public class BallCollectorActivity extends Activity {
 		public void run(){
 			long ms = SystemClock.uptimeMillis();
         	String iurl = imgURL+"?dummy="+ ms;
-            textview.setText("Displaying "+ iurl);
+        	textview.setText("Displaying "+ iurl);
         	/* Note: Redundant not used
         	 * try {
     		    imgView.setImageDrawable(grabImageFromUrl(iurl));
@@ -200,7 +204,11 @@ public class BallCollectorActivity extends Activity {
     		    textview.setText("Error: Exception");
     		}*/
         	try{
+				long start = System.currentTimeMillis();
 	        	Bitmap bitmap = getBitmapImage(imgURL);
+long end = System.currentTimeMillis();
+long elapse = end - start;
+//textview.setText(elapse+"ms is used to download Image.");
 				imgView.setImageBitmap(bitmap);
 				int width = bitmap.getWidth();
 				int height = bitmap.getHeight();
@@ -210,19 +218,24 @@ public class BallCollectorActivity extends Activity {
 				if(!opencv.setSourceImage(pixels, width, height)){ 
 				    Log.d("setSourceIMage:", "Error occurred while setting the source image pixels"); 
 				} 
-				long start = System.currentTimeMillis();
 				int[] result = opencv.locateBall();
-				long end = System.currentTimeMillis();
+end = System.currentTimeMillis();
+elapse = end - start;
+//textview.setText(elapse+"ms is used to process Image.");
 				boolean ballInView = (result[0]==1);
 				int centerX=result[1], centerY=result[2], radius=result[3];
-				boolean leftOfCenter = (ballInView && (centerX < (width*4)/9));
-				boolean rightOfCenter = (ballInView && (centerX > (width*5)/9));
-				boolean inCenter = (ballInView && (centerX >= (width*4)/9) && (centerX <= (width*5)/9) );
+				//boolean leftOfCenter = (ballInView && (centerX < (width*4)/9));
+				//boolean rightOfCenter = (ballInView && (centerX > (width*5)/9));
+				//boolean inCenter = (ballInView && (centerX >= (width*4)/9) && (centerX <= (width*5)/9) );
+				boolean leftOfCenter = (ballInView && (centerY < (height/2)-radius/2));
+				boolean rightOfCenter = (ballInView && (centerY > (height/2)+radius/2));
+				boolean inCenter = (ballInView && (centerY <= height/2+radius/2) && (centerY >= height/2-radius/2) );
+				
 				/** systemState values
 					SYSTEM_INITIAL = 1
 					SYSTEM_BALL_INVIEW = 2
 					SYSTEM_BALL_INCENTRE = 3
-					SYSTEM_BALL_MOVEDOUT = 4
+					SYSTEM_BALL_MOVEDOUT = 4 
 					SYSTEM_BALL_PICKED = 5
 				*/
 				// If Ball is in Camera's field of view
@@ -233,9 +246,9 @@ public class BallCollectorActivity extends Activity {
 					case SYSTEM_BALL_INVIEW:
 						if(!inCenter){
 							if(leftOfCenter){
-								sendMessage('l',SENDTIME);
+								sendMessage('l');
 							} else {
-								sendMessage('r',SENDTIME);
+								sendMessage('r');
 							}
 							break;
 						}
@@ -243,13 +256,13 @@ public class BallCollectorActivity extends Activity {
 					case SYSTEM_BALL_INCENTER:
 						if(inCenter) {
 							systemState=SYSTEM_BALL_INCENTER;
-							sendMessage('F',SENDTIME);
+							sendMessage('F');
 						} else {
 							systemState=SYSTEM_BALL_INVIEW;
 							if(leftOfCenter){
-								sendMessage('l',SENDTIME);
+								sendMessage('l');
 							} else {
-								sendMessage('r',SENDTIME);
+								sendMessage('r');
 							}
 						}
 						break;
@@ -258,7 +271,7 @@ public class BallCollectorActivity extends Activity {
 				} else {
 					switch(systemState){
 					case SYSTEM_INITIAL:
-						sendMessage('l',SENDTIME);
+						sendMessage('l');
 						break;
 					default:
 						systemState=SYSTEM_BALL_PICKED;
@@ -266,17 +279,22 @@ public class BallCollectorActivity extends Activity {
 						textview.setText("Ball successfully picked!");
 					}
 				}
+
+end = System.currentTimeMillis();
+elapse = end - start;
+//textview.setText(elapse+"ms is send image.");
 				byte[] imageData = opencv.getSourceImage();
-				long elapse = end - start;
-				textview.setText(elapse+"ms is used to process Image.");
 				bitmap = BitmapFactory.decodeByteArray(imageData, 0,imageData.length);
 				imgView.setImageBitmap(bitmap);
+end = System.currentTimeMillis();
+elapse = end - start;
+//textview.setText(elapse+"ms is used to complete process Image.");
         	}catch(Exception e) {
     			imgView.setImageResource(R.drawable.notfound);
     		    textview.setText("Error: Exception");
     		}
 			tHandler.postAtTime(this, ms+AUTOTIMER);
-		}		
+		}	
 	};
 	
 	
@@ -338,6 +356,8 @@ public class BallCollectorActivity extends Activity {
 			{
 				Toast.makeText(this, " Connection established ", Toast.LENGTH_SHORT).show();
 				BTConnected=true;
+		        if(automode) sendMessage('M',SENDTIME);
+		        else sendMessage('m', SENDTIME);
 			}
 			Log.d(TAG, "Initialisation Successful");
 		} catch (Exception e) {
@@ -603,12 +623,14 @@ public class BallCollectorActivity extends Activity {
     OnCheckedChangeListener modelistener = new OnCheckedChangeListener() {
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if(isChecked){
+                sendMessage('M',SENDTIME);
             	manualcontrols.setVisibility(LinearLayout.GONE);
             	imgView.setVisibility(ImageView.VISIBLE);
             	tHandler.removeCallbacks(ProcessImageTask);
                 systemState = SYSTEM_INITIAL;
                 tHandler.postDelayed(ProcessImageTask, AUTOTIMER);
             } else {
+                sendMessage('m',SENDTIME);
             	tHandler.removeCallbacks(ProcessImageTask);
             	imgView.setVisibility(ImageView.GONE);
             	manualcontrols.setVisibility(LinearLayout.VISIBLE);

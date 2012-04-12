@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Loading Image &#8230;</string>
+    <string name="hello">Welcome to FireDroid</string>
     <string name="app_name">TennisBallCollector</string>
     <string name="liveimg">Live Image</string>
     <string name="uparrow">Up</string>
