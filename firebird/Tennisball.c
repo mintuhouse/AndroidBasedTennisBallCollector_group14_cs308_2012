@@ -616,7 +616,7 @@ void main()
 		{
 			stop();
 			back();
-			_delay_ms(1000);
+			_delay_ms(100);
 			stop();
 		}
 		

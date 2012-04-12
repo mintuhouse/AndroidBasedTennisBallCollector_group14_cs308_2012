@@ -8272,8 +8272,8 @@ _delay_ms(double __ms)
     36c4:	0e 94 37 0b 	call	0x166e	; 0x166e <back>
     36c8:	80 e0       	ldi	r24, 0x00	; 0
     36ca:	90 e0       	ldi	r25, 0x00	; 0
-    36cc:	aa e7       	ldi	r26, 0x7A	; 122
-    36ce:	b4 e4       	ldi	r27, 0x44	; 68
+    36cc:	a8 ec       	ldi	r26, 0xC8	; 200
+    36ce:	b2 e4       	ldi	r27, 0x42	; 66
     36d0:	8b 87       	std	Y+11, r24	; 0x0b
     36d2:	9c 87       	std	Y+12, r25	; 0x0c
     36d4:	ad 87       	std	Y+13, r26	; 0x0d
@@ -8407,7 +8407,7 @@ _delay_ms(double __ms)
     37a6:	f1 f7       	brne	.-4      	; 0x37a4 <__stack+0x15a5>
     37a8:	9a 83       	std	Y+2, r25	; 0x02
     37aa:	89 83       	std	Y+1, r24	; 0x01
-			_delay_ms(1000);
+			_delay_ms(100);
 			stop();
     37ac:	0e 94 42 0b 	call	0x1684	; 0x1684 <stop>
     37b0:	0c 94 52 10 	jmp	0x20a4	; 0x20a4 <main+0xda>
