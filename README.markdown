@@ -26,7 +26,7 @@ Then it sends appropriate signal to the bot via Bluetooth communication module.
 ********************************************************************************  
 ## Copyright & License  
 ERTS Lab, IIT Bombay 2012  
-Copyright &copy; 2010, ERTS Lab IIT Bombay erts@cse.iitb.ac.in               -*- c -*-  
+Copyright &copy; 2010, ERTS Lab IIT Bombay erts@cse.iitb.ac.in        
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
