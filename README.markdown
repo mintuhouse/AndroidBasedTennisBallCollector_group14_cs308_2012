@@ -1,4 +1,4 @@
-# **Android Based Tennis Ball Collector**
+# **2012 - CS308  Group X : Project Android Based Tennis Ball Collector**
 
 2012 - CS308 Course Project  
 Project website : [e-yantra.org](http://www.e-yantra.org)  
@@ -19,6 +19,18 @@ The bot then analyses the signal received and acts accordingly.
 3. [Bhanu Prakash](http://github.com/bp414)             (09005050)  
 4. [Avinash T](http://github.com/dimpleiitb)            (09005056)  
 
+## Extension of
+* [Tennis Ball Collector using ATmega 2560 Robot](http://www.e-yantra.org/home/projects-wiki/item/131-tennis-ball-collector-using-atmega-2560-robot)
+* [Controlling Firebird V using an Android based phone via Bluetooth Controlling FirebirdV ATmega2560](http://www.e-yantra.org/home/projects-wiki/item/140-controlling-firebird-v-using-an-android-based-phone-via-bluetooth-controlling-firebirdv-atmega2560)
+
+## Tecnologies Used
++   Embedded C
++   JAVA
++   Android
++   Kinect
++   Specialized Hardware
++   Gripper
++   OpenCV
 
 ## Project Setup  
 	* Setup the as shown in [Hardware manual](Documentation/HardwareManual.pdf)
@@ -95,8 +107,8 @@ Use the Hardware and Software Setup manuals for complete set of instructions.
 	* Refer the Hardware setup manual complete set of instructions.
 
 ## References
-	youtube link to project setup
-	various other links
+	* [Android+OpenCV](http://opencv.itseez.com/doc/tutorials/introduction/android_binary_package/android_binary_package.html)
+	*Note: References are mentioned inline.*
 
 
 ********************************************************************************  
