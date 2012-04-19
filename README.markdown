@@ -87,31 +87,31 @@ Use the Hardware and Software Setup manuals for complete set of instructions.
 ### Softwares Setup:  
 * AVR Studio 
 * Open CV for Android Environment setup  
-	** Refer: http://opencv.itseez.com/doc/tutorials/introduction/android_binary_package/android_binary_package.html  
-	** Download [NVPACK](http://developer.nvidia.com/tegra-android-development-pack)  
-	** Download [OpenCV](http://sourceforge.net/projects/opencvlibrary/files/opencv-android/2.3.1/OpenCV-2.3.1-android-bin.tar.bz2/download)  
-	** Start the Eclipse and choose your workspace location.  
-	** Configure your ADT plugin  
-	** Import OpenCV and samples into workspace.  
+** Refer: http://opencv.itseez.com/doc/tutorials/introduction/android_binary_package/android_binary_package.html  
+** Download [NVPACK](http://developer.nvidia.com/tegra-android-development-pack)  
+** Download [OpenCV](http://sourceforge.net/projects/opencvlibrary/files/opencv-android/2.3.1/OpenCV-2.3.1-android-bin.tar.bz2/download)  
+** Start the Eclipse and choose your workspace location.  
+** Configure your ADT plugin  
+** Import OpenCV and samples into workspace.  
 * Setup C++ OpenCV Environment setup  
-	** http://opencv.itseez.com/doc/tutorials/introduction/android_binary_package/android_binary_package_using_with_NDK.html#android-binary-package-with-ndk  
-	** Download [Android NDK](http://developer.android.com/sdk/ndk/index.html)  
-	** Follow all instructions for [Eclipse Setup](http://opencv.itseez.com/doc/tutorials/introduction/android_binary_package/android_binary_package_using_with_NDK.html#android-ndk-integration-with-eclipse)  
+** http://opencv.itseez.com/doc/tutorials/introduction/android_binary_package/android_binary_package_using_with_NDK.html#android-binary-package-with-ndk  
+** Download [Android NDK](http://developer.android.com/sdk/ndk/index.html)  
+** Follow all instructions for [Eclipse Setup](http://opencv.itseez.com/doc/tutorials/introduction/android_binary_package/android_binary_package_using_with_NDK.html#android-ndk-integration-with-eclipse)  
 *By this time all your sample files should be working perfectly fine*   
 * Download the example files  
-	** http://www.stanford.edu/~zxwang/android_opencv.html  
-	** Download opencv [files](http://www.stanford.edu/~zxwang/file/android_opencv.tar.gz) and put them in jni folder of your android application root directory  
+** http://www.stanford.edu/~zxwang/android_opencv.html  
+** Download opencv [files](http://www.stanford.edu/~zxwang/file/android_opencv.tar.gz) and put them in jni folder of your android application root directory  
 *You are ready to go!!*  
 
 #### Troubleshooting  
 * Google it!  
 
 ### Hardware Setup:  
-	* Refer the Hardware setup manual complete set of instructions.  
+* Refer the Hardware setup manual complete set of instructions.  
 
 ## References  
-	* [Android+OpenCV](http://opencv.itseez.com/doc/tutorials/introduction/android_binary_package/android_binary_package.html)  
-	*Note: References are mentioned inline.*  
+* [Android+OpenCV](http://opencv.itseez.com/doc/tutorials/introduction/android_binary_package/android_binary_package.html)  
+*Note: References are mentioned inline.*  
 
 
 ********************************************************************************  
