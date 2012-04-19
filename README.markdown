@@ -1,7 +1,7 @@
 # **Android Based Tennis Ball Collector**
 
 2012 - CS308 Course Project  
-Project website : [e-yantra.org](www.e-yantra.org)
+Project website : [e-yantra.org](http://www.e-yantra.org)
 
 *Team 14*
 
