@@ -16,6 +16,9 @@ float BATT_Voltage, BATT_V;
 
 int scr,scl;
 
+/**
+*Initialises the ports for future uses
+*/
 void INIT_PORTS()
 {
 	DDRA=0x0F;
@@ -32,6 +35,9 @@ void INIT_PORTS()
 
 }
 
+/**
+*Initialises the ports for rotating
+*/
 
 void INIT_PORTS_ROTATE()
 {
@@ -71,6 +77,9 @@ SIGNAL(SIG_USART3_TRANS)
 {
 }
 
+/**
+*Initialises the timer
+*/
 void timer5_init()
 {
 	TCCR5B = 0x00;
@@ -78,9 +87,12 @@ void timer5_init()
 	TCCR5B = 0x0B;
 }
 
-void forward()
+/**
+*Function to move the bot forward 
+*/
+void forward()              //Function for moving forward
 {
-	PORTA=0x06;
+	PORTA=0x06;                     // forward
 }
 
 void right() 				//function for moving right 
@@ -104,8 +116,8 @@ void stop() 				//function for moving stop
 //Velocity control function of wheels
 void velocity (unsigned char t1,unsigned char t2)
 {
-	OCR5AL = t1;                  
-	OCR5BL = t2;
+	OCR5AL = t1;            //  left motor                  
+	OCR5BL = t2;          	//  right motor
 }
 
 
@@ -114,7 +126,7 @@ void velocity (unsigned char t1,unsigned char t2)
 void left_position_encoder_interrupt_init(void)
 {
 	cli();
-	EICRB=EICRB|0x02;
+	EICRB=EICRB|0x02;       
 	EIMSK=EIMSK|0x10;
 	sei();
 }
@@ -144,7 +156,7 @@ void angle_rotate_right(unsigned int Degrees)
 	ReqdShaftCountInt = (unsigned int) ReqdShaftCount;    
 	scr = 0; 
 	scl = 0; 
-	while (1)
+	while (1)				//loop till the bot rotates reqd degrees
 	{
 		if((scr>= ReqdShaftCountInt) | (scl >= ReqdShaftCountInt))
 		{ 
@@ -172,7 +184,7 @@ void angle_rotate_left(unsigned int Degrees)
 	ReqdShaftCountInt = (unsigned int) ReqdShaftCount;    
 	scr = 0; 
 	scl = 0; 
-	while (1)
+	while (1)					//loop till the bot rotates reqd degrees
 	{
 		if((scr>= ReqdShaftCountInt) | (scl >= ReqdShaftCountInt))
 		{ 
@@ -197,12 +209,12 @@ void angle_rotate_left(unsigned int Degrees)
 ISR(INT4_vect)
 {
 
-	scl++;
+	scl++;                    //shaft counter for the left wheel
 }
 //ISR for right wheel shaft encoder
 ISR(INT5_vect)
 {
-	scr++;
+	scr++;					  //shaft counter for the right wheel
 
 }
 
@@ -297,7 +309,9 @@ unsigned char ADC_Conversion(unsigned char Ch)
 	ADCSRB = 0x00;
 	return a;
 }
-	
+
+// Estimate the distance of the object detected. The maximum distance or range is set to 800.
+
 unsigned int Sharp_GP2D12_estimation(unsigned char adc_reading)
 {
 	float distance;
@@ -462,7 +476,7 @@ void main()
 	value = Sharp_GP2D12_estimation(sharp);				//Stores Distance calsulated in a variable "value".
 	lcd_print(1,1,value,3);
 
-	sharp1 = ADC_Conversion(9);						//Stores the Analog value of front sharp connected to ADC channel 10 into variable "sharp"
+	sharp1 = ADC_Conversion(9);						   //Stores the Analog value of front sharp connected to ADC channel 10 into variable "sharp"
 	value1 = Sharp_GP2D12_estimation(sharp1);			//Stores Distance calsulated in a variable "value".
 	lcd_print(1,5,value1,3);
 				
@@ -483,11 +497,10 @@ void main()
 		//value1=(int)sharp1;
 		lcd_print(1,5,value1,3);
 
-		while(value>115 && value1>240)
+		while(value>115 && value1>240)                 //Checks if the sensor values are above respective threshold  
 		{
-			if(data=='F')
+			if(data=='F')                              //If the bluetooth input is "F" then print it and move forward for 1s
 			{
-				
 					lcd_cursor(2,3);
 					lcd_wr_char(data);
 					forward();
@@ -495,19 +508,19 @@ void main()
 					_delay_ms(1000);
 					stop();
 			}
-			if(data == 'M')
+			if(data == 'M')                            //If the bluetooth input is "M" then print it and change the internal mode representation to Auto
 			{
 				mode = 0;
 				lcd_cursor(2,3);
 				lcd_wr_char(data);
 			}
-			if(data == 'm')
+			if(data == 'm')								//If the bluetooth input is "M" then print it and change the internal mode representation to Manual
 			{
 				mode = 1;
 				lcd_cursor(2,3);
 				lcd_wr_char(data);
 			}
-			if(data=='B')
+			if(data=='B')                               //If the bluetooth input is "B" then print it and move backward for 250ms
 			{
 				lcd_cursor(2,3);
 				lcd_wr_char(data);
@@ -517,7 +530,7 @@ void main()
 				stop();
 			}
 	
-			if(data=='L')
+			if(data=='L')					           //If the bluetooth input is "L" then print it and rotate hardleft for 5 degrees
 			{
 				lcd_cursor(2,3);
 				lcd_wr_char(data);
@@ -527,7 +540,7 @@ void main()
 				stop();
 			}
 
-			if(data=='R')
+			if(data=='R')							//If the bluetooth input is "R" then print it and rotate hardright for 10 degrees
 			{
 				lcd_cursor(2,3);
 				lcd_wr_char(data);
@@ -537,7 +550,7 @@ void main()
 				stop();
 			}
 
-			if(data=='l')
+			if(data=='l')                          //If the bluetooth input is "l" then print it and rotate hardleft for 3 degrees
 			{
 				lcd_cursor(2,3);
 				lcd_wr_char(data);
@@ -547,7 +560,7 @@ void main()
 				stop();
 			}
 
-			if(data=='r')
+			if(data=='r')						  ////If the bluetooth input is "r" then print it and rotate hardright for 3 degrees
 			{
 				lcd_cursor(2,3);
 				lcd_wr_char(data);
@@ -557,7 +570,7 @@ void main()
 				stop();
 			}
 
-			if(data=='P')
+			if(data=='P')                           //If the bluetooth input is "P" then print it and pick the ball
 			{
 				lcd_cursor(2,3);
 				lcd_wr_char(data);
@@ -589,7 +602,7 @@ void main()
 			//value1=(int)sharp1;
 			lcd_print(1,5,value1,3);
 		}
-		if(mode == 0)
+		if(mode == 0)                                   // In the Auto mode when bot senses the ball it picks the ball
 		{
 			stop();
 			servo_3(80);
@@ -612,7 +625,7 @@ void main()
 			_delay_ms(1000);
 			stop();
 		}
-		else
+		else										//In manual mode it avoids the obstacles and waits for user command
 		{
 			stop();
 			back();
