@@ -28,8 +28,7 @@ The bot then analyses the signal received and acts accordingly.
 +   Embedded C
 +   JAVA
 +   Android
-+   Kinect
-+   Specialized Hardware
++ 	Bluetooth
 +   Gripper
 +   OpenCV
 
